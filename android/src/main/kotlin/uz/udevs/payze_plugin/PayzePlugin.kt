@@ -2,7 +2,6 @@ package uz.udevs.payze_plugin
 
 
 import android.app.Activity
-import android.content.Intent
 import android.util.Log
 import com.payze.paylib.model.CardInfo
 import io.flutter.embedding.android.FlutterActivity
@@ -13,7 +12,6 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
-import io.flutter.plugin.common.PluginRegistry
 
 /** PayzePlugin */
 class PayzePlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
