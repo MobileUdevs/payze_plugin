@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 
@@ -10,8 +12,8 @@ class MethodChannelPayzePlugin extends PayzePluginPlatform {
   final methodChannel = const MethodChannel('payze_plugin');
 
   @override
-  Future<String?> getPlatformVersion() async {
-    final version = await methodChannel.invokeMethod<String>('getPlatformVersion');
+  Future<bool?> payzeOpen(Map<String, String> json) async {
+    final version = await methodChannel.invokeMethod<bool>('payze_open', json);
     return version;
   }
 }

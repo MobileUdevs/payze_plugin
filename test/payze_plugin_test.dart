@@ -7,9 +7,10 @@ import 'package:plugin_platform_interface/plugin_platform_interface.dart';
 class MockPayzePluginPlatform
     with MockPlatformInterfaceMixin
     implements PayzePluginPlatform {
-
   @override
-  Future<String?> getPlatformVersion() => Future.value('42');
+  Future<bool?> payzeOpen(Map<String, String> json) {
+    throw UnimplementedError();
+  }
 }
 
 void main() {
@@ -24,6 +25,17 @@ void main() {
     MockPayzePluginPlatform fakePlatform = MockPayzePluginPlatform();
     PayzePluginPlatform.instance = fakePlatform;
 
-    expect(await payzePlugin.getPlatformVersion(), '42');
+    expect(
+      await payzePlugin.payzeOpen(
+        Payze(
+          number: '',
+          cardHolder: '',
+          expirationDate: '',
+          securityNumber: '',
+          transactionId: '',
+        ),
+      ),
+      true,
+    );
   });
 }

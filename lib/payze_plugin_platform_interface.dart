@@ -23,7 +23,7 @@ abstract class PayzePluginPlatform extends PlatformInterface {
     _instance = instance;
   }
 
-  Future<String?> getPlatformVersion() {
+  Future<bool?> payzeOpen(Map<String, String> json) {
     throw UnimplementedError('platformVersion() has not been implemented.');
   }
 }
