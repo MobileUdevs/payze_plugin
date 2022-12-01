@@ -21,7 +21,7 @@ void main() {
   });
 
   test('getPlatformVersion', () async {
-    PayzePlugin payzePlugin = PayzePlugin();
+    PayzePlugin payzePlugin = PayzePlugin.instance;
     MockPayzePluginPlatform fakePlatform = MockPayzePluginPlatform();
     PayzePluginPlatform.instance = fakePlatform;
 
