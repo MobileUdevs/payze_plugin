@@ -1,0 +1,29 @@
+PODS:
+  - Flutter (1.0.0)
+  - Payze-iOS-sdk (0.1.0)
+  - payze_plugin (0.0.1):
+    - Flutter
+    - Payze-iOS-sdk (~> 0.1.0)
+
+DEPENDENCIES:
+  - Flutter (from `Flutter`)
+  - payze_plugin (from `.symlinks/plugins/payze_plugin/ios`)
+
+SPEC REPOS:
+  trunk:
+    - Payze-iOS-sdk
+
+EXTERNAL SOURCES:
+  Flutter:
+    :path: Flutter
+  payze_plugin:
+    :path: ".symlinks/plugins/payze_plugin/ios"
+
+SPEC CHECKSUMS:
+  Flutter: f04841e97a9d0b0a8025694d0796dd46242b2854
+  Payze-iOS-sdk: 022ca22a7ee0df02bb241ecf284be4c64b51cefe
+  payze_plugin: 717d91b014c91f35fc3a07d6f7705739afe3fdfb
+
+PODFILE CHECKSUM: 4e8f8b2be68aeea4c0d5beb6ff1e79fface1d048
+
+COCOAPODS: 1.11.3
