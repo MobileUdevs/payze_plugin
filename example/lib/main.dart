@@ -29,12 +29,15 @@ class _MyAppState extends State<MyApp> {
     // Platform messages may fail, so we use a try/catch PlatformException.
     // We also handle the message potentially returning null.
     try {
-      platformVersion = await _payzePlugin.payzeOpen(Payze(
+      platformVersion = await _payzePlugin.payzeOpen(
+            Payze(
               number: "number",
               cardHolder: "cardHolder",
               expirationDate: "expirationDate",
               securityNumber: "securityNumber",
-              transactionId: "transactionId")) ??
+              transactionId: "transactionId",
+            ),
+          ) ??
           false;
     } on PlatformException {
       platformVersion = false;
@@ -47,15 +50,13 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Plugin example app'),
-        ),
+        appBar: AppBar(title: const Text('Plugin example app')),
         body: Center(
           child: TextButton(
             onPressed: () {
               initPlatformState();
             },
-            child: Text('Get Platform version'),
+            child: const Text('Get Platform version'),
           ),
         ),
       ),
