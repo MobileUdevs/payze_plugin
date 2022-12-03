@@ -2,9 +2,7 @@ package uz.udevs.payze_plugin
 
 
 import android.app.Activity
-import android.util.Log
-import com.payze.paylib.model.CardInfo
-import io.flutter.embedding.android.FlutterActivity
+import android.content.Intent
 import io.flutter.embedding.engine.plugins.FlutterPlugin
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
@@ -12,12 +10,22 @@ import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
+import io.flutter.plugin.common.PluginRegistry
+import uz.udevs.payze_plugin.PayzePlugin.Payze.MAIN_ACTIVITY
+import uz.udevs.payze_plugin.PayzePlugin.Payze.PAYZE_ACTIVITY_FINISH
 
 /** PayzePlugin */
-class PayzePlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
+class PayzePlugin : FlutterPlugin, MethodCallHandler, ActivityAware,
+    PluginRegistry.NewIntentListener, PluginRegistry.ActivityResultListener {
 
     private lateinit var channel: MethodChannel
+    private var resultMethod: Result? = null
     private var activity: Activity? = null
+
+    object Payze {
+        const val MAIN_ACTIVITY = 201
+        const val PAYZE_ACTIVITY_FINISH = 301
+    }
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, "payze_plugin")
@@ -25,46 +33,22 @@ class PayzePlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
     }
 
     override fun onMethodCall(call: MethodCall, result: Result) {
+        resultMethod = result
         if (call.method == "payze_open") {
-            val payze = Payze(this)
-            val cardNumber: String = call.argument<String>("number").toString()
-            val cardHolder: String = call.argument<String>("cardHolder").toString()
-            val cardExpiredDate: String = call.argument<String>("expirationDate").toString()
-            val cardSecurityNumber: String = call.argument<String>("securityNumber").toString()
-            val transactionId: String = call.argument<String>("transactionId").toString()
-            val cardInfo = CardInfo(
-                number = cardNumber,
-                cardHolder = cardHolder,
-                expirationDate = cardExpiredDate,
-                securityNumber = cardSecurityNumber,
-            )
-            Log.d("Payze android", "cardNumber $cardNumber")
-            Log.d("Payze android", "cardHolder $cardHolder")
-            Log.d("Payze android", "cardExpiredDate $cardExpiredDate")
-            Log.d("Payze android", "cardSecurityNumber $cardSecurityNumber")
-            Log.d("Payze android", "transactionId $transactionId")
-            payze.pay(
-                cardInfo,
-                transactionId,
-                onSuccess = {
-                    Log.d("Payze android", "sucsees")
-//                        Toast.makeText(this, "payment success", Toast.LENGTH_LONG).show()
-                    result.success("true")
-                },
-                onError = { code, error ->
-                    Log.d("Payze android", code.toString())
-                    Log.d("Payze android", error.toString())
-//                        Toast.makeText(this, "payment error", Toast.LENGTH_LONG).show()
-                    result.success("false")
-                },
-            )
+            val intent = Intent(activity, PayzeActivity::class.java)
+            intent.putExtra("number", call.argument<String>("number"))
+            intent.putExtra("cardHolder", call.argument<String>("cardHolder"))
+            intent.putExtra("expirationDate", call.argument<String>("expirationDate"))
+            intent.putExtra("securityNumber", call.argument<String>("securityNumber"))
+            intent.putExtra("transactionId", call.argument<String>("transactionId"))
+            activity?.startActivityForResult(intent, MAIN_ACTIVITY)
         } else {
             result.notImplemented()
         }
     }
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
-        activity = binding.activity as FlutterActivity
+        activity = binding.activity
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
@@ -81,6 +65,23 @@ class PayzePlugin : FlutterPlugin, MethodCallHandler, ActivityAware {
 
     override fun onDetachedFromEngine(binding: FlutterPlugin.FlutterPluginBinding) {
         channel.setMethodCallHandler(null)
+    }
+
+    override fun onNewIntent(intent: Intent): Boolean {
+        return true
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
+        if (requestCode == MAIN_ACTIVITY && resultCode == PAYZE_ACTIVITY_FINISH) {
+            if (data == null || data.extras == null) {
+                resultMethod?.success(false)
+            } else if (data.getStringExtra("result") == null) {
+                resultMethod?.success(false)
+            } else {
+                resultMethod?.success(data.getBooleanExtra("result", false))
+            }
+        }
+        return true
     }
 
 }
